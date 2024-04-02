@@ -17,9 +17,12 @@ A simple microblog for my coffees and thoughts on coffee.
   - Should have animations using framer motion (want to learn).
 - Go-based api (`/services/api`) 
   - Should use the standard go 1.22 `net/http` package.
-  - Should provide cookie-based authentication for me to login with.
-  - Should use a simple `sqlite` database with `gorm` store information. 
-
+  - Should provide cookie-based/bearer authentication for me to login with.
+  - Should use `gorm` and postgresql for the database.
+  - Should allow users to upload photos through to cloudflare images.
+- Web server reverse proxy to stitch things together (`/services/server`)
+  - Should act as a reverse proxy for both the frontend and api 
+  - Should provide a simple way to manage scaling up services if needed.  
 
 ### Note: on splitting the app and api apart
 
