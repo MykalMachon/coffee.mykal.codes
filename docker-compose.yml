@@ -1,0 +1,20 @@
+version: 3.9
+services:
+  app:
+    build:
+      context: ./services/api/
+      dockerfile: ./services/api/Dockerfile
+  api:
+    build:
+      context: ./services/app/
+      dockerfile: ./services/app/Dockerfile
+  server:
+    ports:
+      - "80:80"
+      - "443:443"
+    build:
+      context: ./services/server/
+      dockerfile: ./services/server/Dockerfile
+    depends_on:
+      - app
+      - api
