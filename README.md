@@ -11,8 +11,8 @@ A simple microblog for my coffees and thoughts on coffee.
 
 ## Technical goals
 
-- Astro-based frontend (`/services/app`)
-  - Should have a performant, accessible, and homepage.
+- Vite-based frontend (`/services/app`)
+  - Should have a performant, accessible, homepage with react.
   - Should provide an admin interface for writing and editing posts.
   - Should have animations using framer motion (want to learn).
 - Go-based api (`/services/api`) 
