@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/rs/cors" // cors goodies
 )
 
 func main() {
@@ -46,9 +48,11 @@ func main() {
 		w.Write([]byte("Hello: you updated post with id = " + id))
 	})
 
+	c := cors.New(cors.Options{})
+
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
-		Handler: router,
+		Handler: c.Handler(router),
 	}
 
 	log.Printf("Starting server on port :%d", port)
