@@ -13,7 +13,7 @@ import (
 func main() {
 
 	portStr := os.Getenv("port")
-	port := 8080
+	port := 8080 // default port
 	if portStr != "" {
 		// Convert the port string to an integer
 		port, _ = strconv.Atoi(portStr)
@@ -51,10 +51,10 @@ func main() {
 	c := cors.New(cors.Options{})
 
 	server := http.Server{
-		Addr:    fmt.Sprintf(":%d", port),
+		Addr:    fmt.Sprintf("[::]:%d", port),
 		Handler: c.Handler(router),
 	}
 
-	log.Printf("Starting server on port :%d", port)
+	log.Printf("Starting server on port [::]:%d", port)
 	server.ListenAndServe()
 }
