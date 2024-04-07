@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { API_URL } from './utils/api'
 
 function App() {
   const [count, setCount] = useState(0)
   const [data, setData] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/posts/`)
+    fetch(`${API_URL}/posts/`)
       .then((res) => res.text())
       .then((data) => setData(data))
       .catch((err) => {

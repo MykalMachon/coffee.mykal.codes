@@ -4,6 +4,7 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY . /app/
+ARG VITE_API_URL ${VITE_API_URL}
 
 # Run the install 
 RUN npm ci
@@ -16,8 +17,6 @@ RUN apk add --no-cache nginx
 
 # Copy NGINX configuration file
 COPY nginx.conf /etc/nginx/nginx.conf
-
-RUN ls -la /app/dist
 
 # Copy static dist files to NGINX default directory
 RUN cp -r /app/dist/ /usr/share/nginx/html
