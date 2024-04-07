@@ -17,8 +17,10 @@ RUN apk add --no-cache nginx
 # Copy NGINX configuration file
 COPY nginx.conf /etc/nginx/nginx.conf
 
+RUN ls -la /app/dist
+
 # Copy static dist files to NGINX default directory
-COPY dist /usr/share/nginx/html
+RUN cp -r /app/dist/ /usr/share/nginx/html
 
 # Expose port 80 for NGINX
 EXPOSE 80
