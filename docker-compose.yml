@@ -7,7 +7,7 @@ services:
     ports:
       - "2080:80"
     environment:
-      - port=80
+      - PORT=80
   app:
     build:
       context: ./services/app/
@@ -21,6 +21,10 @@ services:
     build:
       context: ./services/server/
       dockerfile: Dockerfile
+    environment:
+      - PORT=80
+      - FRONTEND_HOST="app:80"
+      - BACKEND_HOST="api:80"
     depends_on:
       - app
       - api
