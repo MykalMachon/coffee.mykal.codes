@@ -14,8 +14,6 @@ services:
       dockerfile: Dockerfile
     ports: 
       - "1080:80"
-    environment:
-      - VITE_API_URL=http://localhost
   server:
     ports:
       - "80:80"

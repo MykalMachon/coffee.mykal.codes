@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	portStr := os.Getenv("port")
+	portStr := os.Getenv("PORT")
 	port := 8080 // default port
 	if portStr != "" {
 		// Convert the port string to an integer
