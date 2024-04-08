@@ -24,6 +24,11 @@ func main() {
 		w.Write([]byte("Hello World"))
 	})
 
+	router.HandleFunc("GET /healthcheck", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, "Service Healthy")
+	})
+
 	router.HandleFunc("GET /posts/", func(w http.ResponseWriter, r *http.Request) {
 		// TODO: get first page of posts
 		// TODO: get optional page query param to get specific page
@@ -33,18 +38,21 @@ func main() {
 
 	router.HandleFunc("POST /posts/", func(w http.ResponseWriter, r *http.Request) {
 		// TODO: get post data from request and save it
+		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte("Hello: you created a new post"))
 	})
 
 	router.HandleFunc("GET /posts/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 		// TODO: get post and it's data
+		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Hello: you requested post with id = " + id))
 	})
 
 	router.HandleFunc("PUT /posts/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 		// TODO: update post and it's data
+		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Hello: you updated post with id = " + id))
 	})
 
