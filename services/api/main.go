@@ -24,11 +24,44 @@ func main() {
 		w.Write([]byte("Hello World"))
 	})
 
+	// * HEALTH CHECK ROUTES
 	router.HandleFunc("GET /healthcheck", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, "Service Healthy")
 	})
 
+	// * AUTH ROUTES
+	router.HandleFunc("GET /auth/", func(w http.ResponseWriter, r *http.Request) {
+		// TODO: return authentication status
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprint(w, "Not authorized")
+	})
+
+	router.HandleFunc("POST /auth/signup", func(w http.ResponseWriter, r *http.Request) {
+		// TODO: get name/username/password
+		// TODO: check if accepting signups flag is active (if one user is there)
+		// TODO: hash password
+		// TODO: create user object
+		// TODO: create a session, create a cookie and attach it to w
+	})
+
+	router.HandleFunc("POST /auth/login", func(w http.ResponseWriter, r *http.Request) {
+		// TODO: get username/password.
+		// TODO: lookup username; return 401 if it no user exists
+		// TODO: hash password and check if password hashes match; return 401 if not
+		// TODO: if valid login, create a cookie and attach it to w
+		// TODO: if valid login, and mode=API return api key (maybe?)
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprint(w, "Not authorized")
+	})
+
+	router.HandleFunc("GET /auth/logout", func(w http.ResponseWriter, r *http.Request) {
+		// TODO: clear the cookie from the request
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, "Logged out")
+	})
+
+	// * POSTS ROUTES
 	router.HandleFunc("GET /posts/", func(w http.ResponseWriter, r *http.Request) {
 		// TODO: get first page of posts
 		// TODO: get optional page query param to get specific page
