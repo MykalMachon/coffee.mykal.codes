@@ -11,13 +11,6 @@ import (
 )
 
 func main() {
-
-	portStr := os.Getenv("PORT")
-	port := 8080 // default port
-	if portStr != "" {
-		// Convert the port string to an integer
-		port, _ = strconv.Atoi(portStr)
-	}
 	router := http.NewServeMux()
 
 	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
@@ -90,6 +83,13 @@ func main() {
 	})
 
 	c := cors.New(cors.Options{})
+
+	portStr := os.Getenv("PORT")
+	port := 8080 // default port
+	if portStr != "" {
+		// Convert the port string to an integer
+		port, _ = strconv.Atoi(portStr)
+	}
 
 	server := http.Server{
 		Addr:    fmt.Sprintf("[::]:%d", port),
