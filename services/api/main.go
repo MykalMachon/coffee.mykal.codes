@@ -14,12 +14,19 @@ func main() {
 	router := http.NewServeMux()
 
 	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World"))
+		if r.URL.Path == "/" {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("Hello World"))
+		} else {
+			w.WriteHeader(http.StatusNotFound)
+			fmt.Fprint(w, "Page not found")
+		}
 	})
 
 	// * HEALTH CHECK ROUTES
 	router.HandleFunc("GET /healthcheck", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprint(w, "Service Healthy")
 	})
 
