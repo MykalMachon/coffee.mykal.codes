@@ -8,13 +8,19 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5" // default handler still sucks at 404/middleware
-	"github.com/rs/cors"       // used for managing cors and other goodies
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/rs/cors" // used for managing cors and other goodies
 
 	"github.com/mykalmachon/coffee.mykal.codes/api/controllers"
 )
 
 func main() {
 	router := chi.NewRouter()
+
+	// * MIDDLEWARES
+	router.Use(middleware.RequestID)
+	router.Use(middleware.RealIP)
+	router.Use(middleware.Logger)
 
 	// * META ROUTES
 	metaController := controllers.MetaController{}
@@ -40,6 +46,7 @@ func main() {
 		http.Error(w, "Route not found", http.StatusNotFound)
 	})
 
+	// * SERVER SETUP
 	portStr := os.Getenv("PORT")
 	port := 8080 // default port
 	if portStr != "" {
