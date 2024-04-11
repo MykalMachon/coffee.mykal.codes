@@ -27,6 +27,7 @@ func main() {
 	router.HandleFunc("GET /meta/healthcheck", metaController.Healtcheck)
 
 	// * AUTH ROUTES
+	// see OAuth examples here: https://github.com/go-chi/oauth/blob/master/example/authserver/main.go
 	authController := controllers.AuthController{}
 	router.HandleFunc("GET /auth/", authController.Status)
 	router.HandleFunc("POST /auth/signup", authController.Signup)
@@ -54,7 +55,6 @@ func main() {
 	}
 
 	log.Printf("Starting server on port [::]:%d", port)
-
-	corsHandler := cors.Default().Handler(router) // wraps chi Mux in Cors Handler
+	corsHandler := cors.Default().Handler(router) // TODO: move to official chi cors middleware
 	http.ListenAndServe(fmt.Sprintf("[::]:%d", port), corsHandler)
 }
