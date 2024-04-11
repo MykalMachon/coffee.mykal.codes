@@ -7,26 +7,14 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/go-chi/chi/v5" // default handler still sucks at 404/middleware
+	"github.com/rs/cors"       // used for managing cors and other goodies
+
 	"github.com/mykalmachon/coffee.mykal.codes/api/controllers"
-	"github.com/rs/cors" // cors goodies
 )
 
 func main() {
-	router := http.NewServeMux()
-
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" {
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("Hello World"))
-		} else {
-			w.WriteHeader(http.StatusNotFound)
-			fmt.Fprint(w, "Page not found")
-		}
-	})
-
-	// TODO: fix bad 404 routes with middleware
-	// right now a call to /posts/123/hello/world is not a 404. it defaults to /posts/123
-	// need to fix this; should be able to do it with DI / middleware approach 🤔
+	router := chi.NewRouter()
 
 	// * META ROUTES
 	metaController := controllers.MetaController{}
@@ -47,20 +35,19 @@ func main() {
 	router.HandleFunc("PUT /posts/{id}", postController.UpdatePost)
 	router.HandleFunc("DELETE /posts/{id}", postController.DeletePost)
 
-	c := cors.New(cors.Options{})
+	// * ERRORS
+	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Route not found", http.StatusNotFound)
+	})
 
 	portStr := os.Getenv("PORT")
 	port := 8080 // default port
 	if portStr != "" {
-		// Convert the port string to an integer
 		port, _ = strconv.Atoi(portStr)
 	}
 
-	server := http.Server{
-		Addr:    fmt.Sprintf("[::]:%d", port),
-		Handler: c.Handler(router),
-	}
-
 	log.Printf("Starting server on port [::]:%d", port)
-	server.ListenAndServe()
+
+	corsHandler := cors.Default().Handler(router) // wraps chi Mux in Cors Handler
+	http.ListenAndServe(fmt.Sprintf("[::]:%d", port), corsHandler)
 }
