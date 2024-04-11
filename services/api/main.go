@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/mykalmachon/coffee.mykal.codes/api/controllers"
 	"github.com/rs/cors" // cors goodies
 )
 
@@ -23,71 +24,28 @@ func main() {
 		}
 	})
 
-	// * HEALTH CHECK ROUTES
-	router.HandleFunc("GET /healthcheck", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprint(w, "Service Healthy")
-	})
+	// TODO: fix bad 404 routes with middleware
+	// right now a call to /posts/123/hello/world is not a 404. it defaults to /posts/123
+	// need to fix this; should be able to do it with DI / middleware approach 🤔
+
+	// * META ROUTES
+	metaController := controllers.MetaController{}
+	router.HandleFunc("GET /meta/healthcheck", metaController.Healtcheck)
 
 	// * AUTH ROUTES
-	router.HandleFunc("GET /auth/", func(w http.ResponseWriter, r *http.Request) {
-		// TODO: return authentication status
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, "Not authorized")
-	})
-
-	router.HandleFunc("POST /auth/signup", func(w http.ResponseWriter, r *http.Request) {
-		// TODO: get name/username/password
-		// TODO: check if accepting signups flag is active (if one user is there)
-		// TODO: hash password
-		// TODO: create user object
-		// TODO: create a session, create a cookie and attach it to w
-	})
-
-	router.HandleFunc("POST /auth/login", func(w http.ResponseWriter, r *http.Request) {
-		// TODO: get username/password.
-		// TODO: lookup username; return 401 if it no user exists
-		// TODO: hash password and check if password hashes match; return 401 if not
-		// TODO: if valid login, create a cookie and attach it to w
-		// TODO: if valid login, and mode=API return api key (maybe?)
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, "Not authorized")
-	})
-
-	router.HandleFunc("GET /auth/logout", func(w http.ResponseWriter, r *http.Request) {
-		// TODO: clear the cookie from the request
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, "Logged out")
-	})
+	authController := controllers.AuthController{}
+	router.HandleFunc("GET /auth/", authController.Status)
+	router.HandleFunc("POST /auth/signup", authController.Signup)
+	router.HandleFunc("POST /auth/login", authController.Login)
+	router.HandleFunc("GET /auth/logout", authController.Logout)
 
 	// * POSTS ROUTES
-	router.HandleFunc("GET /posts/", func(w http.ResponseWriter, r *http.Request) {
-		// TODO: get first page of posts
-		// TODO: get optional page query param to get specific page
-		// TODO: allow filtering by tags from query params
-		w.Write([]byte("Hello: you requested all posts"))
-	})
-
-	router.HandleFunc("POST /posts/", func(w http.ResponseWriter, r *http.Request) {
-		// TODO: get post data from request and save it
-		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte("Hello: you created a new post"))
-	})
-
-	router.HandleFunc("GET /posts/{id}", func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("id")
-		// TODO: get post and it's data
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello: you requested post with id = " + id))
-	})
-
-	router.HandleFunc("PUT /posts/{id}", func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("id")
-		// TODO: update post and it's data
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello: you updated post with id = " + id))
-	})
+	postController := controllers.PostController{}
+	router.HandleFunc("GET /posts/", postController.GetPosts)
+	router.HandleFunc("POST /posts/", postController.CreatePost)
+	router.HandleFunc("GET /posts/{id}", postController.GetPost)
+	router.HandleFunc("PUT /posts/{id}", postController.UpdatePost)
+	router.HandleFunc("DELETE /posts/{id}", postController.DeletePost)
 
 	c := cors.New(cors.Options{})
 
