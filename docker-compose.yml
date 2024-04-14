@@ -28,3 +28,20 @@ services:
     depends_on:
       - app
       - api
+  database:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tester
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: coffee
+    ports:
+      - 5432:5432
+    
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DESIGN: dracula
+    ports:
+      - 3080:8080
