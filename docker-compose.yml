@@ -28,6 +28,7 @@ services:
     depends_on:
       - app
       - api
+      
   database:
     image: postgres
     restart: unless-stopped
