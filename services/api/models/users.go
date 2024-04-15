@@ -1,11 +1,15 @@
 package models
 
+import (
+	"gorm.io/gorm"
+)
+
 type User struct {
-	ID           int
+	gorm.Model
 	Name         string
 	Email        string
 	PasswordHash string
-	CreatedAt    int32
+	Posts        []Post
 }
 
 type UserService struct{}

@@ -1,2 +1,5 @@
 # build file
 api 
+
+# secrets 
+.env

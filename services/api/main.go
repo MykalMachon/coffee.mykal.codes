@@ -9,15 +9,47 @@ import (
 
 	"github.com/go-chi/chi/v5" // default handler still sucks at 404/middleware
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/rs/cors" // used for managing cors and other goodies
+	"github.com/joho/godotenv" // for local dev
+	"github.com/rs/cors"       // used for managing cors and other goodies
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm" // ORM for database
 
 	"github.com/mykalmachon/coffee.mykal.codes/api/controllers"
+	"github.com/mykalmachon/coffee.mykal.codes/api/models"
 )
 
-func main() {
-	router := chi.NewRouter()
+func OpenDatabaseConnection() (*gorm.DB, error) {
+	db, err := gorm.Open(postgres.New(postgres.Config{
+		DSN: os.Getenv("DATABASE_URL"),
+	}), &gorm.Config{})
+	return db, err
+}
 
-	// * MIDDLEWARES
+func RunDatabaseMigrations(db *gorm.DB, models ...interface{}) error {
+	err := db.AutoMigrate(models)
+	return err
+}
+
+func main() {
+	godotenv.Load()
+
+	// * DATABASE SETUP
+	db, dbErr := OpenDatabaseConnection()
+
+	if dbErr != nil {
+		log.Printf("Cannot connect to database, shutting down: %s", dbErr.Error())
+		os.Exit(1)
+	}
+
+	dbErr = db.AutoMigrate(models.User{}, models.Post{})
+
+	if dbErr != nil {
+		log.Printf("Could not run datbase migrations, shutting down %s", dbErr.Error())
+		os.Exit(1)
+	}
+
+	// * ROUTER SETUP AND MIDDLEWARE
+	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Logger)
