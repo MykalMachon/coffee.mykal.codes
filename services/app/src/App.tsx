@@ -24,7 +24,10 @@ function App() {
         <p>~</p>
       </header>
       <main className="container">
-        <p>some stuff coming soon</p>
+        <p>some stuff coming soon. example data below</p>
+        <pre>
+          {JSON.stringify(data, null, 2)}
+        </pre>
       </main>
     </>
   )
