@@ -17,16 +17,16 @@ function App() {
   }, [])
 
   return (
-    <main>
-      <img src='./favicon.svg' alt="coffee cup" className="logo" />
-      <h1>coffee.mykal.codes</h1>
-      <p className="read-the-docs">
-        Responses from the API go below
-      </p>
-      <pre>
-        {JSON.stringify(data, null, 2)}
-      </pre>
-    </main>
+    <>
+      <header className="header--primary container">
+        <h1>Mykal's coffee</h1>
+        <p>A site for mykal to talk about his silly little coffee obsession and learn tech at the same time.</p>
+        <p>~</p>
+      </header>
+      <main className="container">
+        <p>some stuff coming soon</p>
+      </main>
+    </>
   )
 }
 
