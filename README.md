@@ -16,7 +16,7 @@ A simple microblog for my coffees and thoughts on coffee.
   - Should provide an admin interface for writing and editing posts.
   - Should have animations using framer motion (want to learn).
 - Go-based api (`/services/api`) 
-  - Should use the standard go 1.22 `net/http` package.
+  - Should use as close to standard `net/http` methods as possible with chi router.
   - Should provide cookie-based/bearer authentication for me to login with.
   - Should use `gorm` and postgresql for the database.
   - Should allow users to upload photos through to cloudflare images.
@@ -44,3 +44,9 @@ You can get around that by either
 - Setting a custom `resolver` key (`resolver <dns-server> valid=Ns`) which tells NGINX to ignore TTL and revalidate DNS records every N seconds (can still result in failed requests)
 
 All of these are subpar solutions in my opnion. With that in mind, I moved to Caddy Server which doesn't seem to have this issue.
+
+
+## Note: not using the standard go 1.22 `net/http` package 
+
+tldr: it's middleware is a bit more annoying to implement and handling 404s/500 errors as routes scale is really hard. There isn't a good way to handle a catch-all 404 as far as I can tell. 
+I moved to chi router because it fixes both the middleware and 404/500 error handling while still using the other standard `net/http` interfaces. 
