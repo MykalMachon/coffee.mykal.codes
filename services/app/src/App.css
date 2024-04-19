@@ -33,6 +33,7 @@ h5 {
   font-variant-ligatures: common-ligatures;
   font-weight: 800;
   font-style: normal;
+  color: var(--orange-6);
 }
 
 p {
@@ -43,6 +44,7 @@ p {
   color: var(--orange-1);
   font-variation-settings: "SOFT" 0, "WONK" 0;
 }
+
 
 .container {
   padding: var(--size-3);
@@ -61,4 +63,28 @@ p {
     font-size: var(--font-size-xl);
     color: var(--orange-5);
   }
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: var(--size-3);
+  & a {
+    font-size: var(--font-size-md);
+    color: var(--orange-5);
+    text-decoration: none;
+    &:hover {
+      color: var(--orange-6);
+    }
+  }
+}
+
+.nav ul.nav__content__links {
+  display: flex;
+  list-style: none;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--size-3);
 }
