@@ -48,6 +48,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	// * MODEL SETUP
+	postServices := models.PostService{DB: db}
+
 	// * ROUTER SETUP AND MIDDLEWARE
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
@@ -67,7 +70,7 @@ func main() {
 	router.HandleFunc("GET /auth/logout", authController.Logout)
 
 	// * POSTS ROUTES
-	postController := controllers.PostController{}
+	postController := controllers.PostController{PostService: &postServices}
 	router.HandleFunc("GET /posts/", postController.GetPosts)
 	router.HandleFunc("POST /posts/", postController.CreatePost)
 	router.HandleFunc("GET /posts/{id}", postController.GetPost)

@@ -3,9 +3,13 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/mykalmachon/coffee.mykal.codes/api/models"
 )
 
-type PostController struct{}
+type PostController struct {
+	PostService *models.PostService
+}
 
 func (pc *PostController) GetPost(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
