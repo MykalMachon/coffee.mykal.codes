@@ -1,6 +1,18 @@
 import Layout from "../components/Layout";
+import { API_URL } from "../utils/api";
 
 const SetupPage = () => {
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const response = await fetch(form.action, {
+      method: form.method,
+      body: new FormData(form),
+    });
+    if (response.ok){ console.log('account created!') }
+    else { console.error('account creation failed!') }
+  }
   return (
     <Layout>
       <h1>Setup</h1>
@@ -8,10 +20,14 @@ const SetupPage = () => {
 
       <p>Create your account below and you should be good to go</p>
 
-      <form method="POST" action="/api/signup">
+      <form method="POST" action={`${API_URL}/auth/signup`} onSubmit={handleSubmit}>
         <label>
-          Username:
-          <input type="text" name="username" />
+          Full Name:
+          <input type="text" name="name" />
+        </label>
+        <label>
+          Email:
+          <input type="text" name="email" />
         </label>
         <label>
           Password:
@@ -19,7 +35,7 @@ const SetupPage = () => {
         </label>
         <label>
           Confirm Password:
-          <input type="password" name="confirmPassword" />
+          <input type="password" name="passwordConfirmation" />
         </label>
         <button type="submit">Sign up</button>
       </form>

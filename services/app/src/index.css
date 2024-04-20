@@ -1,68 +1,150 @@
+@import "https://unpkg.com/open-props";
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Outfit:wght@100..900&display=swap");
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --font-size-sm: clamp(0.8rem, 0.17vi + 0.76rem, 0.89rem);
+  --font-size-base: clamp(1rem, 0.34vi + 0.91rem, 1.19rem);
+  --font-size-md: clamp(1.25rem, 0.61vi + 1.1rem, 1.58rem);
+  --font-size-lg: clamp(1.56rem, 1vi + 1.31rem, 2.11rem);
+  --font-size-xl: clamp(1.95rem, 1.56vi + 1.56rem, 2.81rem);
+  --font-size-xxl: clamp(2.44rem, 2.38vi + 1.85rem, 3.75rem);
+  --font-size-xxxl: clamp(4.8rem, 3.54vi + 2.17rem, 8rem);
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --font-family-heading: "Outfit", sans-serif;
+  --font-family-body: "Fraunces", serif;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+* {
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
+  background: var(--choco-12);
   display: flex;
-  place-items: center;
-  width: 100vw;
-  height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-family-heading);
+  font-optical-sizing: auto;
+  font-variant-ligatures: common-ligatures;
+  font-weight: 800;
+  font-style: normal;
+  color: var(--orange-6);
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+p {
+  font-family: var(--font-family-body);
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
+  color: var(--orange-1);
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+}
+
+
+.container {
+  padding: var(--size-3);
+  max-width: 800px;
+  width: 100%;
+}
+
+.header--primary {
+  width: 100%;
+  padding: var(--size-3);
+  & h1 {
+    font-size: var(--font-size-xxxl);
+    color: var(--orange-6);
+  }
+  & p {
+    font-size: var(--font-size-xl);
+    color: var(--orange-5);
+  }
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: var(--size-3);
+  & a {
+    font-size: var(--font-size-md);
+    color: var(--orange-5);
+    text-decoration: none;
+    &:hover {
+      color: var(--orange-6);
+    }
+  }
+}
+
+.nav ul.nav__content__links {
+  display: flex;
+  list-style: none;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--size-3);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+}
+
+form label {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  color: var(--orange-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
+form label input {
+  padding: var(--size-2);
+  background: var(--choco-11);
+  border: 1px solid var(--orange-8);
+  border-radius: var(--size-1);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-body);
+  color: var(--orange-1);
+  transition: all var(--ease-spring-2) 0.3s;
+}
+
+form label input:focus {
+  outline: 1px solid var(--orange-3);
+  outline-offset: 3px;
+}
+
+form button {
+  padding: var(--size-3);
+  background: var(--orange-6);
+  border: none;
+  border-radius: var(--size-1);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-body);
+  color: var(--choco-12);
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: all var(--ease-spring-2) 0.3s;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+form button:hover {
+  background: var(--orange-5);
+}
+
+form button:focus {
+  outline: 1px solid var(--orange-3);
+  outline-offset: 3px;
+}
+
+form button:disabled {
+  background: var(--orange-3);
+  cursor: not-allowed;
 }
