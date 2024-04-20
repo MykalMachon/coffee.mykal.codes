@@ -1,11 +1,17 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/mykalmachon/coffee.mykal.codes/api/models"
+	"gorm.io/gorm"
 )
 
-type AuthController struct{}
+type AuthController struct {
+	UserSerivce *models.UserService
+}
 
 func (ac *AuthController) Status(w http.ResponseWriter, r *http.Request) {
 	// TODO: return authentication status
@@ -14,23 +20,44 @@ func (ac *AuthController) Status(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ac *AuthController) Signup(w http.ResponseWriter, r *http.Request) {
-	// TODO: get name/username/password
-	// TODO: check if accepting signups flag is active (if one user is there)
-	// TODO: hash password
-	// TODO: create user object
-	// TODO: create a session, create a cookie and attach it to w
-	w.WriteHeader(http.StatusUnauthorized)
-	fmt.Fprint(w, "Signup is not allowed at this time")
+	name := r.FormValue("name")
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	passwordConf := r.FormValue("passwordConfirmation")
+
+	if password != passwordConf {
+		http.Error(w, "Passwords do not match.", http.StatusBadRequest)
+		return
+	}
+
+	user, err := ac.UserSerivce.CreateUser(name, email, password)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			http.Error(w, "User already exists with this email", http.StatusBadRequest)
+		} else {
+			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintf(w, "User created: %+v", user)
 }
 
 func (ac *AuthController) Login(w http.ResponseWriter, r *http.Request) {
-	// TODO: get username/password.
-	// TODO: lookup username; return 401 if it no user exists
-	// TODO: hash password and check if password hashes match; return 401 if not
-	// TODO: if valid login, create a cookie and attach it to w
-	// TODO: if valid login, and mode=API return api key (maybe?)
-	w.WriteHeader(http.StatusUnauthorized)
-	fmt.Fprint(w, "Not authorized")
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+
+	_, err := ac.UserSerivce.Authenticate(email, password)
+
+	if err != nil {
+		http.Error(w, "Invalid login. Try again.", http.StatusUnauthorized)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "User login successful")
 }
 
 func (ac *AuthController) Logout(w http.ResponseWriter, r *http.Request) {

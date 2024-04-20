@@ -21,7 +21,9 @@ import (
 func OpenDatabaseConnection() (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN: os.Getenv("DATABASE_URL"),
-	}), &gorm.Config{})
+	}), &gorm.Config{
+		TranslateError: true,
+	})
 	return db, err
 }
 
@@ -49,6 +51,7 @@ func main() {
 	}
 
 	// * MODEL SETUP
+	userService := models.UserService{DB: db}
 	postServices := models.PostService{DB: db}
 
 	// * ROUTER SETUP AND MIDDLEWARE
@@ -63,7 +66,7 @@ func main() {
 
 	// * AUTH ROUTES
 	// see OAuth examples here: https://github.com/go-chi/oauth/blob/master/example/authserver/main.go
-	authController := controllers.AuthController{}
+	authController := controllers.AuthController{UserSerivce: &userService}
 	router.HandleFunc("GET /auth/", authController.Status)
 	router.HandleFunc("POST /auth/signup", authController.Signup)
 	router.HandleFunc("POST /auth/login", authController.Login)
