@@ -59,6 +59,7 @@ func main() {
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Logger)
+	router.Use(controllers.AuthMiddleware)
 
 	// * META ROUTES
 	metaController := controllers.MetaController{}
@@ -70,7 +71,6 @@ func main() {
 	router.HandleFunc("GET /auth/", authController.Status)
 	router.HandleFunc("POST /auth/signup", authController.Signup)
 	router.HandleFunc("POST /auth/login", authController.Login)
-	router.HandleFunc("GET /auth/logout", authController.Logout)
 
 	// * POSTS ROUTES
 	postController := controllers.PostController{PostService: &postServices}
