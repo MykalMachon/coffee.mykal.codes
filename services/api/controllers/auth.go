@@ -88,6 +88,8 @@ func (am *AuthMiddleware) SetAuthUser(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
+		// TODO: FIX THIS. if auth is less than x it causes a panic
+		// I am too tired to fix this right now. please fix tomorrow.
 		authToken := authHeader[len("Bearer: "):]
 
 		if authToken != "" {

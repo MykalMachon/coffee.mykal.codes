@@ -1,13 +1,15 @@
 version: "3.9"
 services:
+
   api:
     build:
       context: ./services/api/
       dockerfile: Dockerfile
     ports:
       - "2080:80"
-    environment:
-      - PORT=80
+    env_file:
+      - ./services/api/.env
+      
   app:
     build:
       context: ./services/app/
