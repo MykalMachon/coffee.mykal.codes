@@ -84,6 +84,10 @@ func (am *AuthMiddleware) SetAuthUser(next http.Handler) http.Handler {
 		// get user from auth
 		var user models.User
 		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			next.ServeHTTP(w, r)
+			return
+		}
 		authToken := authHeader[len("Bearer: "):]
 
 		if authToken != "" {
