@@ -54,12 +54,15 @@ func main() {
 	userService := models.UserService{DB: db}
 	postServices := models.PostService{DB: db}
 
+	// * MIDDLEWARE MANAGERS
+	authMiddleware := controllers.AuthMiddleware{UserService: &userService}
+
 	// * ROUTER SETUP AND MIDDLEWARE
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Logger)
-	router.Use(controllers.AuthMiddleware)
+	router.Use(authMiddleware.SetAuthUser)
 
 	// * META ROUTES
 	metaController := controllers.MetaController{}

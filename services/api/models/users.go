@@ -11,10 +11,15 @@ import (
 
 type User struct {
 	gorm.Model
+	ID           uint   `gorm:"primaryKey"`
 	Name         string `gorm:"not null"`
 	Email        string `gorm:"unique;not null"`
 	PasswordHash string `gorm:"not null"`
 	Posts        []Post
+}
+
+func (u User) IsValid() bool {
+	return u.ID != 0 && u.Name != "" && u.Email != ""
 }
 
 type UserService struct {
@@ -43,6 +48,20 @@ func (us UserService) CreateUser(name string, email string, password string) (*U
 	}
 
 	return &User{}, nil
+}
+
+func (us UserService) GetUser(id uint) (*User, error) {
+	user := User{}
+	result := us.DB.Select("ID", "Name", "Email", "CreatedAt", "UpdatedAt").Find(&user)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("GetUser. User not found: %w", result.Error)
+		}
+		return nil, fmt.Errorf("GetUser. Lookup error: %w", result.Error)
+	}
+
+	return &user, nil
 }
 
 func (us UserService) Authenticate(email string, password string) (*User, error) {

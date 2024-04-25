@@ -37,10 +37,10 @@ func createAuthToken(user models.User) (string, error) {
 	return tokenString, nil
 }
 
-func validateAuthToken(token string) (bool, error) {
+func validateAuthToken(token string) (jwt.MapClaims, error) {
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
-		return false, errors.New("no jwt secret available")
+		return nil, errors.New("no jwt secret available")
 	}
 
 	t, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
@@ -53,7 +53,7 @@ func validateAuthToken(token string) (bool, error) {
 	})
 
 	if err != nil {
-		return false, fmt.Errorf("parse auth token: %w", err)
+		return nil, fmt.Errorf("parse auth token: %w", err)
 	}
 
 	// Check if the token is valid
@@ -61,54 +61,66 @@ func validateAuthToken(token string) (bool, error) {
 		exp := claims["exp"].(float64)
 		expTime := time.Unix(int64(exp), 0)
 		if time.Now().After(expTime) {
-			return false, nil
+			return nil, nil
 		}
-		return true, nil
+		return claims, nil
 	}
 
-	return false, nil
+	return nil, nil
 }
 
 // * MIDDLEWARES
 
+type AuthMiddleware struct {
+	UserService *models.UserService
+}
+
 type key int
 
-const userKey key = iota
+const setUserKey key = iota
 
-func AuthMiddleware(next http.Handler) http.Handler {
+func (am *AuthMiddleware) SetAuthUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// get user from auth
-		// var user models.User
-		// authToken := r.Header.Get("Authorization")
+		var user models.User
+		authHeader := r.Header.Get("Authorization")
+		authToken := authHeader[len("Bearer: "):]
 
-		// if authToken != "" {
-		// 	println("auth token found in request")
-		// } else {
-		// 	println("auth token not found in request")
-		// }
+		if authToken != "" {
+			claims, _ := validateAuthToken(authToken)
+			if claims != nil {
+				user = models.User{
+					ID:    uint(claims["id"].(float64)),
+					Name:  claims["name"].(string),
+					Email: claims["email"].(string),
+				}
+			}
+		}
 
-		ctx := context.WithValue(r.Context(), userKey, nil)
+		ctx := context.WithValue(r.Context(), setUserKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
+func GetAuthUser(r http.Request) (*models.User, error) {
+	userValue := r.Context().Value(setUserKey)
+	user, ok := userValue.(models.User)
+	if !ok || !user.IsValid() {
+		return nil, fmt.Errorf("GetAuthUser: no valid user token")
+	} else {
+		return &user, nil
+	}
+}
+
 // * CONTROLLER ROUTES
 func (ac *AuthController) Status(w http.ResponseWriter, r *http.Request) {
-	token := r.Header.Get("Authorization")
-	if token == "" {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-	valid, err := validateAuthToken(token)
+	user, err := GetAuthUser(*r)
 	if err != nil {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
+		http.Error(w, "Token invalid.", http.StatusUnauthorized)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Token valid. Welcome %s", user.Name)
 	}
-	if !valid {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
-	}
-	fmt.Fprint(w, "Token is valid!")
 }
 
 func (ac *AuthController) Signup(w http.ResponseWriter, r *http.Request) {
