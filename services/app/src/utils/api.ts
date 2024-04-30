@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.PROD ? '/ap`i' : 'http://localhost:2080'
+export const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:2080'
 
 type FetchMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 type FetchOptions = {
